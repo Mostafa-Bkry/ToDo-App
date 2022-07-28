@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/shared/components/constants.dart';
 
 Widget commonTextField({
   required TextEditingController controller,
@@ -33,3 +34,37 @@ Widget commonTextField({
       onTap: onTabFun,
       readOnly: isReadOnly,
     );
+
+Widget taskItem({required int index}) {
+  return Row(
+    children: [
+      CircleAvatar(
+        radius: 40.0,
+        child: Text(records[index]['time']),
+      ),
+      const SizedBox(
+        width: 10,
+      ),
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            records[index]['title'],
+            style: const TextStyle(
+              letterSpacing: 2,
+              fontSize: 25.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            records[index]['date'],
+            style: const TextStyle(
+              fontSize: 15.0,
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+}
