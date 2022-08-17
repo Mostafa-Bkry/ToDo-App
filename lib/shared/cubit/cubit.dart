@@ -19,7 +19,9 @@ class ToDoCubit extends Cubit<ToDoStates> {
   final List<String> titles = ['New Tasks', 'Done Tasks', 'Archived Tasks'];
 
   Database? database;
-  List<Map> records = [];
+  List<Map> newRecords = [];
+  List<Map> doneRecords = [];
+  List<Map> archivedRecords = [];
   IconData fabIcon = Icons.add;
   bool isSheetShown = false;
 
@@ -49,16 +51,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
       },
       onOpen: (db) {
         print('ToDo Databse is opened');
-        getDataFromDatabase(db).then((value) {
-          records = value;
-          emit(ToDoGetFromDatabaseState());
-          //print('the value: $value');
-          ////// setState(() {
-          //   records = value;
-          // });
-          //print('records: $records');
-        }).catchError((error) =>
-            print('Error when getting records from Tasks table: ${error}'));
+        getDataFromDatabase(db);
       },
     )
         .then((value) => database = value)
@@ -80,13 +73,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
         (value) {
           emit(ToDoDatabaseInsertionState());
           Navigator.pop(context);
-          getDataFromDatabase(database!).then(
-            (value) {
-              records = value;
-              emit(ToDoGetFromDatabaseState());
-            },
-          ).catchError((error) => print(
-              'Error when getting records from Tasks table: ${error.toString()}'));
+          getDataFromDatabase(database!);
         },
       ).catchError(
         (error) => print(
@@ -95,9 +82,50 @@ class ToDoCubit extends Cubit<ToDoStates> {
     );
   }
 
-  Future<List<Map>> getDataFromDatabase(Database database) async {
+  void getDataFromDatabase(Database database) {
+    newRecords = [];
+    doneRecords = [];
+    archivedRecords = [];
     emit(ToDoGetFromDatabaseLoadingState());
-    return await database.rawQuery('SELECT * FROM Tasks');
+    database.rawQuery('SELECT * FROM Tasks').then((value) {
+      print(value);
+      value.forEach(
+        (element) {
+          if (element['status'] == 'new') {
+            newRecords.add(element);
+            print('new: $element');
+          } else if (element['status'] == 'updated done') {
+            doneRecords.add(element);
+            print('done: $element');
+          } else {
+            archivedRecords.add(element);
+            print('arch: $element');
+          }
+        },
+      );
+      emit(ToDoGetFromDatabaseState());
+      //print('the value: $value');
+      ////// setState(() {
+      //   records = value;
+      // });
+      //print('records: $records');
+    }).catchError((error) =>
+        print('Error when getting records from Tasks table: ${error}'));
+  }
+
+  void updateDatabase({
+    required String status,
+    required int id,
+  }) {
+    database?.rawUpdate(
+      'UPDATE Tasks SET status = ? WHERE id = ?',
+      ['updated $status', id],
+    ).then(
+      (value) {
+        getDataFromDatabase(database!);
+        emit(ToDoUpdateDatabaseState());
+      },
+    );
   }
 
   void onBottomSheetChanged(bool isSheetShown, IconData fabIcon) {

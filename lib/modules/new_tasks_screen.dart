@@ -14,8 +14,10 @@ class NewTaskScreen extends StatelessWidget {
       builder: (context, state) => Padding(
         padding: const EdgeInsets.all(15.0),
         child: ListView.separated(
-            itemBuilder: (context, index) =>
-                taskItem(record: ToDoCubit.get(context).records, index: index),
+            itemBuilder: (context, index) => taskItem(
+                  record: ToDoCubit.get(context).newRecords[index],
+                  context: context,
+                ),
             separatorBuilder: (context, index) => Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(
                       8.0, 10.0, 0.0, 10.0),
@@ -25,7 +27,7 @@ class NewTaskScreen extends StatelessWidget {
                     color: Colors.grey[300],
                   ),
                 ),
-            itemCount: ToDoCubit.get(context).records.length),
+            itemCount: ToDoCubit.get(context).newRecords.length),
       ),
     );
   }

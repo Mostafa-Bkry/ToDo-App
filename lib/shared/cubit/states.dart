@@ -12,4 +12,6 @@ class ToDoGetFromDatabaseLoadingState extends ToDoStates {}
 
 class ToDoGetFromDatabaseState extends ToDoStates {}
 
+class ToDoUpdateDatabaseState extends ToDoStates {}
+
 class ToDoBottomSheetChangeState extends ToDoStates {}

@@ -51,7 +51,7 @@ class HomeLayout extends StatelessWidget {
                     titleController.clear();
                     timeController.clear();
                     dateController.clear();
-                    print('records from fab ${toDoCubit.records}');
+                    print('records from fab ${toDoCubit.newRecords}');
                   }
                 } else {
                   toDoCubit.onBottomSheetChanged(true, Icons.done);
